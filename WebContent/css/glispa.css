@@ -1,0 +1,30 @@
+<style type="text/css">
+        .left-panel{
+            width: 80%;
+            float:left;
+        }
+        .right-panel{
+            width: 20%;
+            float: right;
+        }
+        .box {
+            border: solid 1px blue;
+            height: 50px;
+            width: 40%;
+            background : blue;
+            float:left;
+            margin:10px 10px;
+        }
+        .body{
+            background: #fff;
+            height:30px;
+        }
+     
+
+        .left-panel .box{
+            width: 40%;
+        }
+        .right-panel .box {
+            width: 90%;
+        }
+    </style>

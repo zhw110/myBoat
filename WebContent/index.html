@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- the "meta" three must be put firstly, others must be in following -->
+    <title>virtual client</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script
+    src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false">
+    </script>
+    <script type='text/javascript'>
+        function getData() {
+            var Vesselname = $('#keyword').val();
+            $.ajax({url: 'getUserData.do',
+                type: 'post',
+                data: {
+                	sort:sort,
+                	Vesselname:Vesselname,
+                },
+                success: function (data) {
+                    if (data.success) {
+                        $(".boat").find('tbody').html('');
+                        /* clean the data on html each time */
+                        $(data.model.queryResult).each(function (key, val) {
+                            row = $('<tr><td>' + val.vesselname + '</td>\
+                             <td>' + val.imo + '</td>\
+                             <td>' + val.mmsi + '</td>\
+                             <td>' + val.type + '</td>\
+                            <td><div class="map" style="width:500px;height:300px;"></div></td></tr>');
+                            $(".boat").find('tbody').append(row);
+
+                            var myCenter = new google.maps.LatLng(val.latitude, val.longitude);
+		                    var mapProp  = {center: myCenter, zoom: 5, mapTypeId: google.maps.MapTypeId.ROADMAP};
+                            var map = new google.maps.Map(row.find(".map")[0], mapProp);
+                            var marker = new google.maps.Marker({position: myCenter});
+                            marker.setMap(map);
+                            });
+                    }
+                },
+                dataType: 'json'});
+
+        }
+
+
+        $(function () {
+            sort = "asc";
+            getData();
+            $('.doSort').click(function () {
+                sort = sort == "asc" ? "desc" : "asc";
+                $(this).html(sort);
+                getData();
+            });
+
+            $('#search').click(function () {
+                getData();
+            });
+        });
+
+
+    </script>
+</head>
+<body>
+
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-8">
+            <h1>Boat list</h1>
+        </div>
+        <div class="col-md-4">
+            <form class="navbar-form navbar-left search" role="search">
+                <div class="form-group">
+                    <th>Sort: <a class="doSort" href="javascript:void(0);">Asc</a></th>
+                    <!-- add the sort key -->
+                    <input type="text" id="keyword" class="form-control" placeholder="Search" Vesselname="keyword">
+                    <!-- add the search table -->
+                </div>
+                <input type="button" id="search" class="btn btn-default" value="Submit"/><!-- add the submit boton -->
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <table class="table table-striped boat">
+                <thead>
+                <th>Vesselname</th>
+                <th>imo</th>
+                <th>mmsi</th>
+                <th>type</th>
+                <th>map</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
